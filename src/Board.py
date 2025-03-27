@@ -22,12 +22,6 @@ VALID_NUMBERS = set(list(range(10)))
 VALID_STRING = f"{EMPTY}123456789"
 
 
-class BoardState(str, Enum):
-    SOLVED = "SOLVED"
-    INVALID = "INVALID"
-    INCOMPLETE = "INCOMPLETE"
-
-
 class Board:
     @staticmethod
     def from_string(board: str) -> "Board":
@@ -65,7 +59,7 @@ class Board:
                     split_board_i += 1
                 split_board[split_board_i] = str(cell) if cell != 0 else EMPTY
                 split_board_i += 1
-        return "".join(split_board)
+        return "".join(split_board).strip()
 
     def __getitem__(self, key: tuple[int, int]) -> int:
         return self.board[key[0]][key[1]]
@@ -73,22 +67,21 @@ class Board:
     def __setitem__(self, key: tuple[int, int], value: int) -> None:
         self.board[key[0]][key[1]] = value
 
-    def compute_state(self) -> BoardState:
+    def is_valid(self) -> bool:
         row_left = [set(range(1, 10)) for _ in range(9)]
         col_left = [set(range(1, 10)) for _ in range(9)]
         box_left = [set(range(1, 10)) for _ in range(9)]
 
-        result = BoardState.SOLVED
         try:
             for i in range(9):
                 for j in range(9):
                     if self[i, j] == 0:
-                        result = BoardState.INCOMPLETE
+                        continue
                     else:
                         row_left[i].remove(self[i, j])
                         col_left[j].remove(self[i, j])
                         box_left[(i // 3) * 3 + j // 3].remove(self[i, j])
         except KeyError:
-            return BoardState.INVALID
+            return False
 
-        return result
+        return True

@@ -20,4 +20,4 @@ board = Board.from_string(
 )
 
 solver = Solver(board)
-print(solver.solution())
+[print(solution) for solution in solver.solution(2)]
