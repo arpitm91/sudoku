@@ -88,7 +88,7 @@ class Board:
             or value not in self.box_left[key[0] // 3][key[1] // 3]
         ):
             if value != 0:
-                raise ValueError(f"Invalid value {value} at {key}")
+                raise ValueError()
         if old_value != 0:
             self.row_left[key[0]].add(old_value)
             self.col_left[key[1]].add(old_value)
