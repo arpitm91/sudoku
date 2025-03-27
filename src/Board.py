@@ -80,8 +80,8 @@ class Board:
 
         result = BoardState.SOLVED
         try:
-            for i in range(10):
-                for j in range(10):
+            for i in range(9):
+                for j in range(9):
                     if self[i, j] == 0:
                         result = BoardState.INCOMPLETE
                     else:
