@@ -20,4 +20,4 @@ board = Board.from_string(
 )
 
 solver = Solver(board)
-[print(solution) for solution in solver.solution(2)]
+[print(f"{i+1})\n{solution}") for i, solution in enumerate(solver.solution(2000000))]

@@ -48,7 +48,7 @@ class Solver:
         if len(self.solutions) == 0:
             print("No solution found")
         elif len(self.solutions) < max_solutions:
-            print("All solutions found")
+            print(f"All {len(self.solutions)} solutions found")
         else:
             print(
                 f"Hit max solutions limit of {max_solutions}. There can be more solutions"

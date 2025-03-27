@@ -1,4 +1,4 @@
-from enum import Enum
+from copy import deepcopy
 
 EMPTY = "·"
 BLANK = """
@@ -56,15 +56,22 @@ class Board:
                 assert cell in list(range(10))
                 if cell != 0:
                     self[i, j] = cell
+        self.original_board = deepcopy(self.board)
 
     def __str__(self) -> str:
         split_board = list(BLANK)
         split_board_i = 0
-        for row in self.board:
-            for cell in row:
+        for i, row in enumerate(self.board):
+            for j, cell in enumerate(row):
+                is_original = self.original_board[i][j] == cell
+                content = str(cell) if cell != 0 else EMPTY
+                if is_original:
+                    content = f"\033[1;91;40m{content}\033[0m"
+                else:
+                    content = f"\033[1;92;40m{content}\033[0m"
                 while split_board[split_board_i] != EMPTY:
                     split_board_i += 1
-                split_board[split_board_i] = str(cell) if cell != 0 else EMPTY
+                split_board[split_board_i] = content
                 split_board_i += 1
         return "".join(split_board).strip()
 
