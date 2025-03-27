@@ -2,7 +2,7 @@ from copy import deepcopy
 
 EMPTY = "·"
 BLANK = """
-╔═════╦═════╦═════╗
+╔═════╦ARPIT╦═════╗
 ║· · ·║· · ·║· · ·║
 ║· · ·║· · ·║· · ·║
 ║· · ·║· · ·║· · ·║
@@ -66,9 +66,9 @@ class Board:
                 is_original = self.original_board[i][j] == cell
                 content = str(cell) if cell != 0 else EMPTY
                 if is_original:
-                    content = f"\033[1;91;40m{content}\033[0m"
+                    content = f"\033[1;91m{content}\033[0m"
                 else:
-                    content = f"\033[1;92;40m{content}\033[0m"
+                    content = f"\033[1;92m{content}\033[0m"
                 while split_board[split_board_i] != EMPTY:
                     split_board_i += 1
                 split_board[split_board_i] = content

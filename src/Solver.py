@@ -16,6 +16,7 @@ class Solver:
             print(
                 f"Found {len(self.solutions)} solutions in {current_time - self.start_time:.2f} seconds, currently at row {row}, col {col}"
             )
+            print(self.board)
             self.last_print_time = current_time
 
     def _solve(self, row: int, col: int, max_solutions: int) -> None:

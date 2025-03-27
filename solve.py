@@ -3,7 +3,7 @@ from src.Solver import Solver
 
 board = Board.from_string(
     """
-╔═════╦═════╦═════╗
+╔═════╦ARPIT╦═════╗
 ║· 7 ·║· · 1║4 · ·║
 ║8 · ·║6 · ·║· · ·║
 ║· 4 ·║8 · 7║· · ·║
