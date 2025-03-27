@@ -1,13 +1,25 @@
 from src.Board import Board
 from copy import deepcopy
+import time
 
 
 class Solver:
     def __init__(self, board: Board) -> None:
         self.board = board
         self.solutions: list[Board] = []
+        self.start_time = time.time()
+        self.last_print_time = self.start_time
 
-    def _solve(self, row: int, col: int, max_solutions) -> None:
+    def report(self, row: int, col: int):
+        current_time = time.time()
+        if current_time - self.last_print_time > 1:
+            print(
+                f"Found {len(self.solutions)} solutions in {current_time - self.start_time:.2f} seconds, currently at row {row}, col {col}"
+            )
+            self.last_print_time = current_time
+
+    def _solve(self, row: int, col: int, max_solutions: int) -> None:
+        self.report(row, col)
         if col == 9:
             if len(self.solutions) < max_solutions:
                 self.solutions.append(deepcopy(self.board))
@@ -27,7 +39,7 @@ class Solver:
 
         self.board[row, col] = 0
 
-    def solution(self, max_solutions=1) -> list[Board]:
+    def solution(self, max_solutions: int = 1) -> list[Board]:
 
         self._solve(0, 0, max_solutions)
 
