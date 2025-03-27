@@ -1,3 +1,6 @@
+from enum import Enum
+
+EMPTY = "·"
 BLANK = """
 ╔═════╦═════╦═════╗
 ║· · ·║· · ·║· · ·║
@@ -14,44 +17,35 @@ BLANK = """
 ╚═════╩═════╩═════╝
 """
 
+assert BLANK.count(EMPTY) == 9 * 9
+VALID_NUMBERS = set(list(range(10)))
+VALID_STRING = f"{EMPTY}123456789"
 
-def valid_board_string(board: str) -> bool:
-    split_board = board.strip().split("\n")
-    assert len(split_board) == 13
-    assert split_board[0] == "╔═════╦═════╦═════╗"
-    assert split_board[4] == "╠═════╬═════╬═════╣"
-    assert split_board[8] == "╠═════╬═════╬═════╣"
-    assert split_board[12] == "╚═════╩═════╩═════╝"
 
-    for i in [1, 2, 3, 5, 6, 7, 9, 10, 11]:
-        assert len(split_board[i]) == 19
-        for j in range(19):
-            if j % 2 == 1:
-                assert split_board[i][j] in "·123456789"
-            elif j % 6 == 0:
-                assert split_board[i][j] == "║"
-            else:
-                assert split_board[i][j] == " "
-    return True
+class BoardState(str, Enum):
+    SOLVED = "SOLVED"
+    INVALID = "INVALID"
+    INCOMPLETE = "INCOMPLETE"
 
 
 class Board:
     @staticmethod
     def from_string(board: str) -> "Board":
-        if not valid_board_string(board):
-            raise ValueError("Invalid board string")
-        split_board = board.strip().split("\n")
+        blank_board, user_board = BLANK.strip(), board.strip()
+        assert len(blank_board) == len(user_board)
 
         arr_board: list[list[int]] = []
-        for i in [1, 2, 3, 5, 6, 7, 9, 10, 11]:
-            row_board = []
-            for j in range(19):
-                if j % 2 == 1:
-                    if split_board[i][j] == "·":
-                        row_board.append(0)
-                    else:
-                        row_board.append(int(split_board[i][j]))
-            arr_board.append(row_board)
+        row = []
+        for base, user in zip(blank_board, user_board):
+            if base == EMPTY:
+                assert user in VALID_STRING
+                row.append(0 if user == EMPTY else int(user))
+            else:
+                assert base == user
+                if base == "\n":
+                    if len(row) == 9:
+                        arr_board.append(row)
+                        row = []
         return Board(arr_board)
 
     def __init__(self, board: list[list[int]]) -> None:
@@ -59,18 +53,42 @@ class Board:
         for row in board:
             assert len(row) == 9
             for cell in row:
-                assert cell in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                assert cell in list(range(10))
         self.board = board
 
     def __str__(self) -> str:
-        split_board = BLANK.strip().split("\n")
-        for arr_i, string_i in enumerate([1, 2, 3, 5, 6, 7, 9, 10, 11]):
-            string_row = list(split_board[string_i])
-            for j in range(9):
-                if self.board[arr_i][j] == 0:
-                    string_row[j * 2 + 1] = "·"
-                else:
-                    string_row[j * 2 + 1] = str(self.board[arr_i][j])
-            split_board[string_i] = "".join(string_row)
+        split_board = list(BLANK)
+        split_board_i = 0
+        for row in self.board:
+            for cell in row:
+                while split_board[split_board_i] != EMPTY:
+                    split_board_i += 1
+                split_board[split_board_i] = str(cell) if cell != 0 else EMPTY
+                split_board_i += 1
+        return "".join(split_board)
 
-        return "\n".join(split_board)
+    def __getitem__(self, key: tuple[int, int]) -> int:
+        return self.board[key[0]][key[1]]
+
+    def __setitem__(self, key: tuple[int, int], value: int) -> None:
+        self.board[key[0]][key[1]] = value
+
+    def compute_state(self) -> BoardState:
+        row_left = [set(range(1, 10)) for _ in range(9)]
+        col_left = [set(range(1, 10)) for _ in range(9)]
+        box_left = [set(range(1, 10)) for _ in range(9)]
+
+        result = BoardState.SOLVED
+        try:
+            for i in range(10):
+                for j in range(10):
+                    if self[i, j] == 0:
+                        result = BoardState.INCOMPLETE
+                    else:
+                        row_left[i].remove(self[i, j])
+                        col_left[j].remove(self[i, j])
+                        box_left[(i // 3) * 3 + j // 3].remove(self[i, j])
+        except KeyError:
+            return BoardState.INVALID
+
+        return result
