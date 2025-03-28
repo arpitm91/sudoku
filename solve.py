@@ -1,5 +1,5 @@
 from src.Board import Board
-from src.Solver import Solver
+from src.Solver import solve
 
 board = Board.from_string(
     """
@@ -19,5 +19,7 @@ board = Board.from_string(
 """
 )
 
-solver = Solver(board)
-[print(f"{i+1})\n{solution}") for i, solution in enumerate(solver.solution(2000000))]
+solutions = solve(board, 2000000)
+
+for i, solution in enumerate(solutions):
+    print(f"{i+1})\n{solution}")

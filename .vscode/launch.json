@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Solve",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/solve.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
