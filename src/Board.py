@@ -100,3 +100,6 @@ class Board:
             self.box_left[key[0] // 3][key[1] // 3].remove(value)
 
         self.board[key[0]][key[1]] = value
+
+    def is_original(self, i: int, j: int) -> bool:
+        return self.original_board[i][j] == self.board[i][j]
