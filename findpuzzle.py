@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 
 from skimage.segmentation import clear_border
-from recognize_digit import Recognizer
+from Recognizer import Recognizer
 
 SEE_COUNTOURS = True
 DIGIT_SIZE = 60
 time = 1
 
-image = cv2.imread("./b.webp")
+image = cv2.imread("./puzzle_images/b.webp")
 
 preprocessed_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 preprocessed_image = cv2.GaussianBlur(preprocessed_image, (7, 7), 3)
