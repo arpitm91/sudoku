@@ -27,6 +27,7 @@ def find_puzzle(image: np.ndarray) -> np.ndarray:
         cv2.drawContours(countoured_image, contours[0], -1, (0, 255, 0), 2)
         cv2.imshow("See Countours", countoured_image)
         cv2.waitKey(SEE_COUNTOURS_TIME)
+        cv2.destroyAllWindows()
 
     for c in contours[0]:
         perimeter = cv2.arcLength(c, True)
@@ -45,13 +46,13 @@ def find_puzzle(image: np.ndarray) -> np.ndarray:
         cv2.drawContours(countoured_image, [puzzle_vertices], -1, (0, 255, 0), 2)
         cv2.imshow("See Countours", countoured_image)
         cv2.waitKey(SEE_COUNTOURS_TIME)
+        cv2.destroyAllWindows()
 
     puzzle_size = 9 * DIGIT_SIZE
     src_pts = puzzle_vertices.reshape(4, 2).astype("float32")
-    dst_pts = np.array(
-        [[puzzle_size, 0], [0, 0], [0, puzzle_size], [puzzle_size, puzzle_size]],
-        dtype="float32",
-    )
+    dst_pts = src_pts.copy()
+    dst_pts[src_pts < np.average(src_pts)] = 0
+    dst_pts[src_pts >= np.average(src_pts)] = puzzle_size
 
     perspective = cv2.getPerspectiveTransform(src_pts, dst_pts)
     warp = cv2.warpPerspective(image.copy(), perspective, (puzzle_size, puzzle_size))

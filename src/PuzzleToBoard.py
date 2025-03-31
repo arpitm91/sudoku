@@ -25,6 +25,7 @@ def puzzle_to_board(puzzle_image: np.ndarray) -> list:
     assert h % 9 == 0, "Puzzle image must be divisible by 9"
     digit_size = h // 9
     board = []
+    display_image = puzzle_image.copy()
     for i in range(9):
         row = []
         for j in range(9):
@@ -46,31 +47,33 @@ def puzzle_to_board(puzzle_image: np.ndarray) -> list:
                 digit_r = cv2.resize(digit, (28, 28), interpolation=cv2.INTER_AREA)
                 result = recognizer.predict(digit_r)
             if SEE_DIGIT:
-                cv2.imshow("digit", digit)
+                display_image[y : y + digit_size, x : x + digit_size] = cv2.cvtColor(
+                    digit, cv2.COLOR_GRAY2BGR
+                )
+                cv2.imshow("digit", display_image)
                 cv2.waitKey(SEE_DIGIT_TIME)
-            text_image = np.ones((digit_size, digit_size), dtype=np.uint8) * 255
-            text = str(result)
-            textsize = cv2.getTextSize(text, FONT, FONT_SCALE, FONT_THICKNESS)[0]
-            textX = (digit_size - textsize[0]) // 2
-            textY = (digit_size + textsize[1]) // 2
-            cv2.putText(
-                text_image,
-                text,
-                (textX, textY),
-                FONT,
-                FONT_SCALE,
-                FONT_COLOR,
-                FONT_THICKNESS,
-                FONT_LINE_TYPE,
-            )
-            digit = np.concatenate((digit, text_image), axis=1)
+            text_image = puzzle_image[y : y + digit_size, x : x + digit_size].copy()
+            if result != 0:
+                text = str(result)
+                textsize = cv2.getTextSize(text, FONT, FONT_SCALE, FONT_THICKNESS)[0]
+                textX = (digit_size - textsize[0]) // 2
+                textY = (digit_size + textsize[1]) // 2
+                cv2.putText(
+                    text_image,
+                    text,
+                    (textX, textY),
+                    FONT,
+                    FONT_SCALE,
+                    FONT_COLOR,
+                    FONT_THICKNESS,
+                    FONT_LINE_TYPE,
+                )
+            # digit = np.concatenate((digit, text_image), axis=1)
             if SEE_DIGIT:
-                cv2.imshow("digit", digit)
+                display_image[y : y + digit_size, x : x + digit_size] = text_image
+                cv2.imshow("digit", display_image)
                 cv2.waitKey(SEE_DIGIT_TIME)
             row.append(result)
         board.append(row)
-    board[3][1] = 6
-    board[4][4] = 6
-    board[6][6] = 6
-
+    cv2.destroyAllWindows()
     return Board(board)

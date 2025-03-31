@@ -6,11 +6,14 @@ from src.Constants import (
     FONT_THICKNESS,
     FONT_COLOR,
     FONT_LINE_TYPE,
+    TEMPORARY_FONT_COLOR,
 )
 import numpy as np
 
 
-def display_puzzle_result(puzzle_image: np.ndarray, solution: Board) -> None:
+def display_puzzle_result(
+    puzzle_image: np.ndarray, solution: Board, temporary: bool = False
+) -> None:
     h, w = puzzle_image.shape[:2]
     assert h == w, "Puzzle image must be square"
     assert h % 9 == 0, "Puzzle image must be divisible by 9"
@@ -31,10 +34,11 @@ def display_puzzle_result(puzzle_image: np.ndarray, solution: Board) -> None:
                     (textX, textY),
                     FONT,
                     FONT_SCALE,
-                    FONT_COLOR,
+                    TEMPORARY_FONT_COLOR if temporary else FONT_COLOR,
                     FONT_THICKNESS,
                     FONT_LINE_TYPE,
                 )
 
     cv2.imshow("result", result_image)
-    cv2.waitKey(0)
+    wait_time = 10 if temporary else 0
+    cv2.waitKey(wait_time)

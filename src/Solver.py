@@ -1,6 +1,7 @@
 from src.Board import Board
 from src.Logger import Logger
 from copy import deepcopy
+import numpy as np
 
 
 def _solve(
@@ -34,8 +35,10 @@ def _solve(
     board[row, col] = 0
 
 
-def solve(board: Board, max_solutions: int = 1) -> list[Board]:
-    logger = Logger()
+def solve(
+    board: Board, max_solutions: int = 1, puzzle_image: None | np.ndarray = None
+) -> list[Board]:
+    logger = Logger(1, puzzle_image)
     solutions: list[Board] = []
     _solve(board, 0, 0, solutions, max_solutions, logger)
 
